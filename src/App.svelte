@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import Lang from "./lib/Lang.svelte";
   import Textbox from "./lib/Textbox.svelte";
 
@@ -61,6 +62,18 @@
       btn_msg = '上传识别';
     }
   }
+
+  onMount(() => {
+    document.onpaste = function(a){
+      const b = a.clipboardData;
+      if(b.files.length > 0){
+        file.files = b.files;
+        update_preview();
+        upload_image();
+      }
+    };
+  });
+
 </script>
 
 <main>

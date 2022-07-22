@@ -5,7 +5,7 @@
 
   onMount(() => {
     lang = localStorage.getItem('lang') || 'zh-Hans';
-  })
+  });
   function remember_lang() {
     localStorage.setItem('lang', lang);
   }
