@@ -2,7 +2,6 @@
   import Lang from "./lib/Lang.svelte";
   import Textbox from "./lib/Textbox.svelte";
 
-  const API_URL = 'http://localhost:5174/';
   let abort = new AbortController();
   let form;
   let file;
@@ -46,7 +45,7 @@
       } else {
         error = '';
       }
-      const res = await fetch(API_URL, {
+      const res = await fetch(form.action, {
         signal: abort.signal,
         method: form.method,
         body: new FormData(form),
@@ -66,7 +65,7 @@
 
 <main>
   <div>
-    <form method="POST" bind:this={form} on:submit|preventDefault={upload_image}>
+    <form action="/api" method="POST" bind:this={form} on:submit|preventDefault={upload_image}>
       <Lang />
       <input type="file" name="file" accept="image/*" bind:this={file} on:change={update_preview}/>
       <button type="submit" disabled={loading}>{btn_msg}</button>

@@ -45,7 +45,7 @@ async def ocr(request):
   return web.json_response(
     {'result': res},
     headers = {
-      'Access-Control-Allow-Origin': '*',
+      # 'Access-Control-Allow-Origin': '*',
     },
   )
 
@@ -56,7 +56,7 @@ async def ocr_file(tmpfile, lang):
   return json.loads(out)
 
 def setup_app(app):
-  app.router.add_post('/', ocr)
+  app.router.add_post('/api', ocr)
 
 def main():
   import argparse
