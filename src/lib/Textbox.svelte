@@ -25,15 +25,14 @@
       w = bound.width;
       h = bound.height;
       const M = getTransform(
-        [[0, 0], [0, h], [w, 0], [w, h]],
+        [[0, 0], [w, 0], [w, h], [0, h]],
         [
           [coords[0][0] - l, coords[0][1] - t],
-          [coords[3][0] - l, coords[3][1] - t],
           [coords[1][0] - l, coords[1][1] - t],
           [coords[2][0] - l, coords[2][1] - t],
+          [coords[3][0] - l, coords[3][1] - t],
         ],
       );
-      M[0][1] = -M[0][1];
       const s = matrixToString(M);
       box.style.transform = `matrix3d(${s})`;
       o = r[1][1];

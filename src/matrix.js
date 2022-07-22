@@ -30,9 +30,9 @@ const getTransform = function(from, to) {
 
 const matrixToString = function(M) {
   const results = [];
-  for(const row of M) {
-    for(const x of row) {
-      results.push(x.toFixed(20));
+  for(let i=0; i<4; i++) {
+    for(let j=0; j<4; j++) {
+      results.push(M[j][i].toFixed(20));
     }
   }
   return results.join(',');
