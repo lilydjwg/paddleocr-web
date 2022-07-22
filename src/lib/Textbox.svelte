@@ -16,7 +16,7 @@
   onMount(() => {
     coords = r[0];
     text = r[1][0];
-    o = r[1][1];
+    o = 0;
     l = coords[0][0];
     t = coords[0][1];
 
@@ -36,6 +36,7 @@
       M[0][1] = -M[0][1];
       const s = matrixToString(M);
       box.style.transform = `matrix3d(${s})`;
+      o = r[1][1];
     }, 100);
   });
 </script>
