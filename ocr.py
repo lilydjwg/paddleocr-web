@@ -85,8 +85,6 @@ LANGUAGES = {
 }
 
 def main(img, lang):
-  # Paddleocr目前支持的多语言语种可以通过修改lang参数进行切换
-  # 例如`ch`, `en`, `fr`, `german`, `korean`, `japan`
   ocr = PaddleOCR(use_angle_cls=True, lang=LANGUAGES[lang][1], show_log=False)
   result = ocr.ocr(img)
   json.dump(result, sys.stdout)
