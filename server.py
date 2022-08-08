@@ -64,7 +64,7 @@ def main():
   from nicelogger import enable_pretty_logging
 
   parser = argparse.ArgumentParser(
-    description = 'HTTP services for build.archlinuxcn.org',
+    description = 'HTTP services for PaddleOCR',
   )
   parser.add_argument('--port', default=5174, type=int,
                       help='port to listen on')
