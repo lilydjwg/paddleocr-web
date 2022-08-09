@@ -37,6 +37,7 @@
 
   async function upload_image() {
     abort.abort();
+    results = [];
     abort = new AbortController();
     btn_msg = '上传中...';
     try {
