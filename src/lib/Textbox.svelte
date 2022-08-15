@@ -35,9 +35,9 @@
       const from = [[0, 0], [w, 0], [w, h], [0, h]];
       const to = [
         [coords[0][0] - l, coords[0][1] - t],
-        [coords[1][0] - l, coords[1][1] - t],
-        [coords[2][0] - l, coords[2][1] - t],
-        [coords[3][0] - l, coords[3][1] - t],
+        [coords[1][0] + 4 - l, coords[1][1] - t],
+        [coords[2][0] + 4 - l, coords[2][1] + 4 - t],
+        [coords[3][0] - l, coords[3][1] + 4 - t],
       ];
       const M = getTransform(from, to);
       console.log(r, from, to, M);
