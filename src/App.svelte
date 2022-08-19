@@ -103,6 +103,10 @@
     color: red;
   }
 
+  form {
+    margin-bottom: 0.4em;
+  }
+
   #result {
     position: relative;
   }
