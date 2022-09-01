@@ -7,12 +7,17 @@ import asyncio
 import tempfile
 import subprocess
 import time
+from functools import partial
 
 from aiohttp import web
 
 logger = logging.getLogger(__name__)
 
-async def ocr(request):
+async def ocr(sem, request):
+  async with sem:
+    return await _ocr(request)
+
+async def _ocr(request):
   multipart = await request.multipart()
 
   with tempfile.TemporaryDirectory() as tmpdir:
@@ -55,8 +60,8 @@ async def ocr_file(tmpfile, lang):
   out, _err = await p.communicate()
   return json.loads(out)
 
-def setup_app(app):
-  app.router.add_post('/api', ocr)
+def setup_app(app, sem):
+  app.router.add_post('/api', partial(ocr, sem))
 
 def main():
   import argparse
@@ -73,12 +78,14 @@ def main():
   parser.add_argument('--loglevel', default='info',
                       choices=['debug', 'info', 'warn', 'error'],
                       help='log level')
+  parser.add_argument('-j', type=int, default=os.cpu_count(),
+                      help='max parallel jobs')
   args = parser.parse_args()
 
   enable_pretty_logging(args.loglevel.upper())
 
   app = web.Application()
-  setup_app(app)
+  setup_app(app, asyncio.Semaphore(args.j))
 
   web.run_app(app, host=args.ip, port=args.port)
 
