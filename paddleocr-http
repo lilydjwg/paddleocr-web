@@ -136,13 +136,17 @@ async def _ocr(request):
 _ocr_caches = {}
 def ocr_file(img, lang):
   if (ocr := _ocr_caches.get(lang)) is None:
-    ocr = PaddleOCR(use_angle_cls=True, lang=LANGUAGES[lang][1], show_log=False)
+    ocr = PaddleOCR(
+      lang = LANGUAGES[lang][1],
+      use_angle_cls = True,
+      show_log = False,
+    )
     _ocr_caches[lang] = ocr
   try:
     result = ocr.ocr(img)
   except FileNotFoundError:
     return
-  # change format back to 2.5
+  # change format back to 2.5; the first image?
   return result[0]
 
 def setup_app(app, sem):
