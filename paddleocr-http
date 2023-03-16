@@ -5,7 +5,6 @@ import os
 import asyncio
 import tempfile
 import time
-from functools import partial
 
 from aiohttp import web
 
@@ -91,11 +90,7 @@ LANGUAGES = {
   'zh-Hant': ('中文（繁体）', 'chinese_cht'),
 }
 
-async def ocr(sem, request):
-  async with sem:
-    return await _ocr(request)
-
-async def _ocr(request):
+async def ocr(request):
   multipart = await request.multipart()
 
   with tempfile.TemporaryDirectory() as tmpdir:
@@ -122,8 +117,7 @@ async def _ocr(request):
         lang = await part.text()
 
     st = time.time()
-    loop = asyncio.get_running_loop()
-    res = await loop.run_in_executor(None, ocr_file, tmpfile, lang)
+    res = await ocr_file(tmpfile, lang)
     logger.info('OCR time: %.3fs', time.time() - st)
 
   return web.json_response(
@@ -134,7 +128,8 @@ async def _ocr(request):
   )
 
 _ocr_caches = {}
-def ocr_file(img, lang):
+_ocr_lock = asyncio.Lock()
+async def ocr_file(img, lang):
   if (ocr := _ocr_caches.get(lang)) is None:
     ocr = PaddleOCR(
       lang = LANGUAGES[lang][1],
@@ -143,14 +138,16 @@ def ocr_file(img, lang):
     )
     _ocr_caches[lang] = ocr
   try:
-    result = ocr.ocr(img)
+    async with _ocr_lock:
+      loop = asyncio.get_running_loop()
+      result = await loop.run_in_executor(None, ocr.ocr, img)
   except FileNotFoundError:
     return
   # change format back to 2.5; the first image?
   return result[0]
 
-def setup_app(app, sem):
-  app.router.add_post('/api', partial(ocr, sem))
+def setup_app(app):
+  app.router.add_post('/api', ocr)
 
 def main():
   import argparse
@@ -163,14 +160,12 @@ def main():
   parser.add_argument('--loglevel', default='info',
                       choices=['debug', 'info', 'warn', 'error'],
                       help='log level')
-  parser.add_argument('-j', type=int, default=os.cpu_count(),
-                      help='max parallel jobs')
   args = parser.parse_args()
 
   enable_pretty_logging(args.loglevel.upper())
 
   app = web.Application()
-  setup_app(app, asyncio.Semaphore(args.j))
+  setup_app(app)
 
   web.run_app(app, path='/run/paddleocr/http.sock')
 
