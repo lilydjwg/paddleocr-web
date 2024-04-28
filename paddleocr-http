@@ -14,7 +14,7 @@ from paddleocr import PaddleOCR
 
 LANGUAGES = {
   'abq': ('阿巴扎文', 'abq'),
-  'ady': ('阿迪格语', 'ady'),
+  'ady': ('阿迪格文', 'ady'),
   'af': ('南非荷兰文', 'af'),
   'anp': ('昂加文', 'ang'),
   'ar': ('阿拉伯文', 'ar'),
@@ -67,7 +67,7 @@ LANGUAGES = {
   'pl': ('波兰文', 'pl'),
   'pt': ('葡萄牙文', 'pt'),
   'ro': ('罗马尼亚文', 'ro'),
-  'ru': ('俄罗斯文', 'ru'),
+  'ru': ('俄文', 'ru'),
   'sck': ('萨德里文', 'sck'),
   'sk': ('斯洛伐克文', 'sk'),
   'sl': ('斯洛文尼亚文', 'sl'),
