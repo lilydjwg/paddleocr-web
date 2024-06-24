@@ -3,6 +3,9 @@
   import Lang from "./lib/Lang.svelte";
   import Textbox from "./lib/Textbox.svelte";
 
+  // const API_PREFIX = 'http://localhost/ocr';
+  const API_PREFIX = '';
+
   let abort = new AbortController();
   let form;
   let file;
@@ -79,7 +82,7 @@
 
 <main>
   <div>
-    <form action="/api" method="POST" bind:this={form} on:submit|preventDefault={upload_image}>
+    <form action="{API_PREFIX}/api" method="POST" bind:this={form} on:submit|preventDefault={upload_image}>
       <Lang />
       <input type="file" name="file" accept="image/*" bind:this={file} on:change={update_preview}/>
       <button type="submit" disabled={loading}>{btn_msg}</button>
