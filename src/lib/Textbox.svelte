@@ -13,7 +13,7 @@
   let vertical = false;
 
   $: {
-    coords = r[0];
+    coords = r.poly;
     vertical = (coords[3][1] - coords[0][1]) / (coords[1][0] - coords[0][0]) > 1.5;
     if(vertical) {
       fontsize = coords[1][0] - coords[0][0];
@@ -21,7 +21,7 @@
       fontsize = coords[3][1] - coords[0][1];
     }
     console.log('fontsize', fontsize);
-    text = r[1][0];
+    text = r.text
     o = 0;
     l = coords[0][0];
     t = coords[0][1];
@@ -33,17 +33,27 @@
       w = bound.width;
       h = bound.height;
       const from = [[0, 0], [w, 0], [w, h], [0, h]];
-      const to = [
-        [coords[0][0] - l, coords[0][1] - t],
-        [coords[1][0] + 4 - l, coords[1][1] - t],
-        [coords[2][0] + 4 - l, coords[2][1] + 4 - t],
-        [coords[3][0] - l, coords[3][1] + 4 - t],
-      ];
+      let to;
+      if(r.dir == 0){
+        to = [
+          [coords[0][0] - l, coords[0][1] - t],
+          [coords[1][0] + 4 - l, coords[1][1] - t],
+          [coords[2][0] + 4 - l, coords[2][1] + 4 - t],
+          [coords[3][0] - l, coords[3][1] + 4 - t],
+        ];
+      }else{
+        to = [
+          [coords[2][0] + 4 - l, coords[2][1] + 4 - t],
+          [coords[3][0] - l, coords[3][1] + 4 - t],
+          [coords[0][0] - l, coords[0][1] - t],
+          [coords[1][0] + 4 - l, coords[1][1] - t],
+        ];
+      }
       const M = getTransform(from, to);
       console.log(r, from, to, M);
       const s = matrixToString(M);
       box.style.transform = `matrix3d(${s})`;
-      o = r[1][1];
+      o = r.score;
     }, 100);
   });
 </script>

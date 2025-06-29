@@ -133,8 +133,8 @@ async def ocr_file(img, lang):
   if (ocr := _ocr_caches.get(lang)) is None:
     ocr = PaddleOCR(
       lang = LANGUAGES[lang][1],
-      use_angle_cls = True,
-      show_log = False,
+      use_doc_orientation_classify = False,
+      use_doc_unwarping = False,
     )
     _ocr_caches[lang] = ocr
   try:
@@ -143,8 +143,15 @@ async def ocr_file(img, lang):
       result = await loop.run_in_executor(None, ocr.ocr, img)
   except FileNotFoundError:
     return
-  # change format back to 2.5; the first image?
-  return result[0]
+  r = result[0]
+
+  j = r.json['res']
+  return [{
+    'poly': j['rec_polys'][i],
+    'text': j['rec_texts'][i],
+    'score': j['rec_scores'][i],
+    'dir': j['textline_orientation_angles'][i],
+  } for i in range(len(j['rec_texts']))]
 
 def setup_app(app):
   app.router.add_post('/api', ocr)
@@ -163,6 +170,11 @@ def main():
   args = parser.parse_args()
 
   enable_pretty_logging(args.loglevel.upper())
+
+  import warnings
+  warnings.simplefilter("ignore")
+  paddle_logger = logging.getLogger('paddlex')
+  paddle_logger.setLevel(logging.ERROR)
 
   app = web.Application()
   setup_app(app)
